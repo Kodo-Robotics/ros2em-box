@@ -16,7 +16,7 @@ VERSION="1.100.03093"
 INSTALL_DIR="/home/vagrant/.local/vscodium"
 
 mkdir -p $INSTALL_DIR
-curl -fL https://github.com/VSCodium/vscodium/releases/download/$VERSION/VSCodium-$VERSION-linux-$ARCH.tar.gz \
+curl -fL https://github.com/VSCodium/vscodium/releases/download/$VERSION/VSCodium-linux-$ARCH-$VERSION.tar.gz \
     | tar xz --strip-components=1 -C $INSTALL_DIR
 
 # Add VSCodium to Path
