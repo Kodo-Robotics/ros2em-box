@@ -19,35 +19,41 @@ sudo apt install -y ros-humble-desktop
 
 echo "source /opt/ros/humble/setup.bash" >> /home/vagrant/.bashrc
 
-# Xfce minimal + VNC
-sudo apt install -y xfce4 xfce4-terminal tigervnc-standalone-server dbus-x11
+# Minimal GUI + VNC
+sudo apt install -y x11vnc xvfb fluxbox dbus-x11 xterm
 
-mkdir -p ~/.vnc
-echo '#!/bin/bash' > ~/.vnc/xstartup
-echo 'xrdb $HOME/.Xresources' >> ~/.vnc/xstartup
-echo 'startxfce4 &' >> ~/.vnc/xstartup
-chmod +x ~/.vnc/xstartup
+# Startup script for X session
+mkdir -p /home/vagrant/.vnc
+cat <<'EOF' > /home/vagrant/.vnc/startup.sh
+#!/bin/bash
+export DISPLAY=:1
+Xvfb :1 -screen 0 1280x720x24 &
+sleep 2
+fluxbox &
+x11vnc -display :1 -nopw -forever -shared -xrandr -clipboard &
+wait
+EOF
+chmod +x /home/vagrant/.vnc/startup.sh
+chown -R vagrant:vagrant /home/vagrant/.vnc
 
-# Systemd service for VNC, bound to localhost
-cat <<EOF | sudo tee /etc/systemd/system/vncserver@vagrant.service
+# Systemd service for VNC
+cat <<EOF | sudo tee /etc/systemd/system/x11vnc.service
 [Unit]
-Description=TigerVNC Server
+Description=Start virtual X session with x11vnc
 After=network.target
 
 [Service]
-Type=forking
 User=vagrant
-ExecStartPre=-/usr/bin/vncserver -kill :1 > /dev/null 2>&1
-ExecStart=/usr/bin/vncserver :1 -geometry 1280x720 -depth 24 -localhost -SecurityTypes None,TLSNone
-ExecStop=/usr/bin/vncserver -kill :1
+ExecStart=/home/vagrant/.vnc/startup.sh
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable vncserver@vagrant.service
-sudo systemctl start vncserver@vagrant.service
+sudo systemctl enable x11vnc.service
+sudo systemctl start x11vnc.service
 
 # Install noVNC
 sudo apt install -y git python3-websockify

@@ -2,6 +2,8 @@ Vagrant.configure("2") do |config|
     config.vm.box = "bento/ubuntu-22.04"
     config.vm.hostname = "ros2-humble"
 
+    config.vm.network "public_network"
+
     config.vm.provision "shell", path: "https://raw.githubusercontent.com/SakshayMahna/ros2env-box/refs/heads/main/ros2-humble/scripts/install.sh"
     config.vm.provision "shell", path: "https://raw.githubusercontent.com/SakshayMahna/ros2env-box/refs/heads/main/ros2-humble/scripts/vscode-server.sh"
 end
