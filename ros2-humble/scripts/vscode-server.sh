@@ -2,8 +2,17 @@
 set -eux
 
 # Download and unpack code-server
+ARCH_RAW=$(uname -m)
+if [[ "$ARCH_RAW" == "x86_64" ]]; then
+    ARCH="linux-amd64"
+elif [[ "$ARCH_RAW" == "aarch64" ]]; then
+    ARCH="linux-arm64"
+else
+    echo "Unsupported architecture: $ARCH_RAW"
+    exit 1
+fi
+
 VERSION="4.90.1"
-ARCH="linux-arm64"
 INSTALL_DIR="/home/vagrant/.local/code-server"
 
 mkdir -p $INSTALL_DIR
