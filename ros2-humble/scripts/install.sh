@@ -30,7 +30,7 @@ export DISPLAY=:1
 Xvfb :1 -screen 0 1280x720x24 &
 sleep 2
 fluxbox &
-x11vnc -display :1 -nopw -forever -shared -xrandr -clipboard &
+x11vnc -display :1 -nopw -forever -shared -xrandr &
 wait
 EOF
 chmod +x /home/vagrant/.vnc/startup.sh
@@ -72,7 +72,7 @@ After=network.target
 Type=simple
 User=vagrant
 WorkingDirectory=/home/vagrant/noVNC
-ExecStart=/home/vagrant/noVNC/utils/novnc_proxy --vnc localhost:5901 --listen 0.0.0.0:6080
+ExecStart=/home/vagrant/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 0.0.0.0:6080
 Restart=always
 
 [Install]
